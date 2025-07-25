@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo">
+                <h1>ResultAnalyzer</h1>
+                <p>Smart grading for students</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li id="dashboardNav" style="display: none;"><a href="#dashboard">Dashboard</a></li>
+                    <li id="aboutNav"><a href="#about">About Us</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button id="loginBtn">Login</button>
+                <button id="registerBtn">Register</button>
+            </div>
+        </header>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Student Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Admission Number</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <p>Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Student Registration</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" placeholder="Type your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="Type your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regUsername">Admission Number</label>
+                        <input type="text" id="regUsername" placeholder="Enter your admission number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="At least 6 characters with alphabets, numbers & special characters" required>
+                        <small class="password-hint">Password must contain at least 6 characters including alphabets, numbers and special characters</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Left Sidebar for Ads (only shown when logged in) -->
+            <aside class="sidebar" id="sidebar" style="display: none;">
+                <div class="advertisement">
+                   
+                    <h2> Learn coding with Expert</h2>
+                    <p>Take the first step toward your goal by connecting with <b>Varsha Ma'am</b> – recognized as one of the best coders in India. Her expertise, mentorship, and experience can guide you on your journey to coding excellence.
+                        Don't just dream it — code it!<b>
+                        Contact Varsha Ma'am today and start transforming your skills. </b> 🤖</p>
+                    </div>
+                <div class="advertisement">
+                    <h3>Premium Features</h3>
+                    <p>Learn Ethical Hacking 🔥</p>
+                    <button class="ad-btn">Learn More</button>
+                </div>
+                <div class="advertisement">
+                    <h3>Study Resources</h3>
+                    <p>Get access to premium study materials</p>
+                    <button class="ad-btn">Browse Now</button>
+                </div>
+                <div class="advertisement">
+                    <h3>Tutor Matching</h3>
+                    <p>Connect with expert tutors in your area</p>
+                    <button class="ad-btn">Find Tutors</button>
+                </div>
+            </aside>
+
+            <!-- Dashboard Section (only shown when logged in) -->
+            <section id="dashboard" class="dashboard" style="display: none;">
+                <h2>Student Dashboard</h2>
+                <div class="welcome-message">
+                    <p id="welcomeText">Welcome to your dashboard</p>
+                </div>
+
+                <div class="result-options">
+                    <div class="option-card">
+                        <h3>Manual Entry</h3>
+                        <p>Enter your marks manually</p>
+                        <button id="manualEntryBtn">Enter Marks</button>
+                    </div>
+                    <div class="option-card">
+                        <h3>Upload Result</h3>
+                        <p>Upload your result as PDF</p>
+                        <input type="file" id="fileUpload" accept=".pdf" style="display: none;">
+                        <button id="uploadBtn">Upload PDF</button>
+                    </div>
+                </div>
+
+                <!-- Manual Entry Form -->
+                <div id="manualEntryForm" class="form-container" style="display: none;">
+                    <h3>Enter Your Marks</h3>
+                    <form id="marksForm">
+                        <div class="form-group">
+                            <label for="subject1">Subject 1</label>
+                            <input type="number" id="subject1" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject2">Subject 2</label>
+                            <input type="number" id="subject2" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject3">Subject 3</label>
+                            <input type="number" id="subject3" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject4">Subject 4</label>
+                            <input type="number" id="subject4" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject5">Subject 5</label>
+                            <input type="number" id="subject5" min="0" max="100" required>
+                        </div>
+                        <button type="submit">Analyze Results</button>
+                    </form>
+                </div>
+
+                <!-- Results Display -->
+                <div id="resultsDisplay" style="display: none;">
+                    <h3>Your Results Analysis</h3>
+                    <div class="grade-summary">
+                        <div class="grade-card">
+                            <h4>Overall Grade</h4>
+                            <p id="overallGrade">A+</p>
+                        </div>
+                        <div class="grade-card">
+                            <h4>Percentage</h4>
+                            <p id="percentage">92%</p>
+                        </div>
+                        <div class="grade-card">
+                            <h4>Status</h4>
+                            <p id="status">Excellent</p>
+                        </div>
+                    </div>
+
+                    <div class="charts">
+                        <div class="chart-container">
+                            <canvas id="marksChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="subject-breakdown">
+                        <h4>Subject-wise Performance</h4>
+                        <table id="subjectTable">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Marks</th>
+                                    <th>Grade</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Home Page Content (shown when not logged in) -->
+            <section id="homeContent" class="home-content">
+                <div class="hero-section">
+                    <h2>Welcome to ResultAnalyzer</h2>
+                    <p>Analyze your academic performance with our smart grading system</p>
+                    <div class="auth-buttons">
+                        <button id="heroLoginBtn">Login</button>
+                        <button id="heroRegisterBtn">Register</button>
+                    </div>
+                </div>
+
+                <!-- About Us Section -->
+                <section id="about" class="about-section">
+                    <h2>About Us</h2>
+                    <div class="about-content">
+                        <div class="about-text">
+                            <h3>Our Mission</h3>
+                            <p><b>"We aim to provide students with a comprehensive tool to analyze their academic performance, identify strengths and weaknesses, and improve their results through data-driven insights"</p>
+                            
+                            <h3>How It Works</h3>
+                            <p>"Easily upload your result file or enter your marks manually — our intelligent system will instantly generate detailed analytics, including grade breakdowns, interactive performance charts, and personalized recommendations to help you improve and excel."</b></p>
+                            
+                            <h3>Meet The Team</h3>
+                            <div class="team-members">
+                                <div class="member">
+                                    <img src="faraz1.jpg" alt="Team Member">
+                                    <h4>Faraz Suhel</h4>
+                                    <p><b>Founder & CEO</b></p>
+                                </div>
+                                <div class="member">
+                                    <img src="tasleem.jpg" alt="Team Member">
+                                    <h4>Mohd Tasleem</h4>
+                                    <p><b>Lead Developer</p>
+                                </div>
+                                <div class="member">
+                                    <img src="ankit.jpg" alt="Team Member">
+                                    <h4>Ankit Anand</h4>
+                                    <p>Data Analyst</p>
+                                </div>
+                                <div class="member">
+                                    <img src="ishu.png" alt="Team Member">
+                                    <h4>Anubhav Gangwar</h4>
+                                    <p>Data Analyst</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <footer id="contact">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li id="footerDashboardNav" style="display: none;"><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: resultanalyzer@gmail.com</p>
+                    <p>Phone: +91 9648034083</p>
+                    <p>Phone: +91 9354142615</p>
+                    <p>Phone: +91 7061994063</p>
+                    <p>Phone: +91 9412282128</p>
+                    <p>Address: Galgotias UNiversity , Sector 17A , GB Nagar , Uttar Pradesh 203201</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/itss__ishuu/"><img src="ig.png" alt="Instagram" width="75px"></a>
+                        <a href="https://www.instagram.com/axkit_xo/"><img src="ig.png" alt="Instagram" width="75px"></a>
+                        <a href="https://www.instagram.com/mohammad_tasleem___/"><img src="ig.png" alt="Instagram" width="75px"></a>
+                        <a href="https://www.instagram.com/_faraz_khan_2004/"><img src="ig.png" alt="Instagram" width="75px"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 ResultAnalyzer. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
